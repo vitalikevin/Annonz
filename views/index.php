@@ -40,7 +40,7 @@ if (isLogin()) {
 				<li><a href="categories"
 						class="<?= str_contains(FULL_URL, "categories") ? "active" : "" ?>">Catégories</a></li>
 				<li><a href="ads" class="<?= str_contains(FULL_URL, "ads") ? "active" : "" ?>">Annonces</a></li>
-				<li><a href="users" class="<?= str_contains(FULL_URL, "users") ? "active" : "" ?>">Users ??? </a></li>
+				<li><a href="users" class="<?= str_contains(FULL_URL, "users") ? "active" : "" ?>">Users</a></li>
 
 				<!-- Boutons disponibles uniquement pour les utilisateurs connectés-->
 
