@@ -1,0 +1,79 @@
+body {
+	 background-color: #d0b89e;
+	 font-family: Trebuchet MS, Verdana, Arial;
+	 text-align: center;
+	 background-image: url("annonce.jpg");
+ 	 background-repeat: no-repeat ;
+ 	 background-attachment: fixed ; } 
+h1, h2, h3, h4, h5, h6 {
+	 text-align: center;
+  	 color: #41201B; }
+ul{
+	 list-style-image:url(puce.gif);
+	 text-align: left;}
+a:link {color: #844C35;}
+a:visited {color: #844C35;}
+a:hover {color: #FFFFFF;}
+a:focus {color: #FFFFFF;}
+a:active {color: #009900;}
+#container{width:780px; margin:0 auto;}
+#top{width:auto; display:block; height:80px; margin-top: 10px;
+
+margin-right: 10px;
+
+margin-bottom: 50px;
+
+margin-left: 10px;
+
+}
+#bar{width:auto; display:block; height:40px; margin: 30px;}
+#main{width:auto; display:block;}
+#column_left{width:560px; margin-right:20px; float:left;}
+#column_right{width:200px; float:left;}
+/*
+div.spacer permet de faire deux colonnes de hauteur égale
+*/
+div.spacer{clear:both; height:10px; display:block;}
+#footer{width:auto; display:block; height:24px;}
+.annonce {
+	 margin-left:35%;
+	 margin-top: 5px;
+	 text-align: left;
+	 border: 6px double #FFFFFF;
+	 }
+.perime {
+	 margin-left:35%;
+	 margin-top: 5px;
+	 text-align: left;
+	 border: 6px double red;
+	 }
+.attente {
+	 margin-left:35%;
+	 margin-top: 5px;
+	 text-align: left;
+	 border: 6px double green;
+	 }
+.texte {
+	 width:35%;
+	 float: left;
+	 }
+.menu {
+	 margin-left:35%;
+	 text-align: left;
+  	 color: #41201B; 
+}	
+	
+.zoom {
+width:30%;
+float: left;
+margin:auto;
+}
+.zoom p {
+text-align:right;
+}
+.zoom img {
+height:80px;
+}
+.zoom img:hover {
+height:300px;
+}
