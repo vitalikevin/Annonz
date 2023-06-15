@@ -38,7 +38,7 @@ if (isLogin()) {
 						class="<?= str_contains(FULL_URL, "index") || str_contains(FULL_URL, "home") ? "active" : "" ?>">Accueil</a>
 				</li>
 				<li><a href="categories"
-						class="<?= str_contains(FULL_URL, "categories") ? "active" : "" ?>">Catégories !</a></li>
+						class="<?= str_contains(FULL_URL, "categories") ? "active" : "" ?>">Catégories</a></li>
 				<li><a href="ads" class="<?= str_contains(FULL_URL, "ads") ? "active" : "" ?>">Annonces</a></li>
 				<li><a href="users" class="<?= str_contains(FULL_URL, "users") ? "active" : "" ?>">Users</a></li>
 
