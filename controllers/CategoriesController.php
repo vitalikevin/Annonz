@@ -10,31 +10,28 @@ class CategoriesController
     public function __construct()
     {
         $this->categoryManager = new CategoriesManager();
-        // on demande au manager de charger tous les utilisateurs depuis la base de données
+        // on demande au manager de charger toutes les catégories depuis la base de données
         $this->categoryManager->loadAllCategories();
     }
 
-    /** fontion appelée par la route /allusers */
     public function display_all_categories()
     {
-        // on récupère le tableau des utilisateurs dans une variable $users
+        // on récupère le tableau des catégories dans une variable $categories
         $categories = $this->categoryManager->getAllCategories();
-        // et on charge la vue qui utilisera $users
+        // et on charge la vue qui utilisera $categories
         require_once "views/categories.php";
     }
 
     public function getCategories()
     {
-        // on récupère le tableau des utilisateurs dans une variable $users
+        // on récupère le tableau des categories dans une variable $categories
         $categories = $this->categoryManager->getCategories();
         return $categories;
     }
 
     public function getCategory($id_category)
     {
-        $category = $this->categoryManager->getCategory($id_category);
-        // On gère deux types d'affichage : soit l'utilisateur ne précise rien et c'est du json, soit l'utilisateur rajoute ?output=html, dans ce cas il ya un vrai front
-        
+        $category = $this->categoryManager->getCategory($id_category);        
         $categories = array($category);
         require_once "views/category_form.php";
     }
@@ -50,9 +47,9 @@ class CategoriesController
                 $this->categoryManager->editCategory($category);
                 
             } else {
-                // Crée un nouvel objet User
+                // Crée un nouvel objet Category
                 $category = new Category(null, $_POST['categoryName'], $_POST['categoryDescription']);
-                // Enregistre l'utilisateur dans la base de données
+                // Enregistre la catégorie dans la base de données
                 $this->categoryManager->newCategory($category);
             }
         }

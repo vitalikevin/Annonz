@@ -2,19 +2,16 @@
 require_once "Model.class.php";
 require_once "Ad.class.php";
 
-/*******
- * Class UsersManager
- * La classe UserSManager a pour vocation de gérer les objets Users que l'applictaion va créer et manipuler
- */
+
 class AdsManager extends Model
 {
-    // on conserve les users dans un tableau privé
+    // on conserve les annonces dans un tableau privé
     private $ads;
 
 
     /****
-     * @param $user
-     * Ajout d'un user au tableau $users
+     * @param $ad
+     * Ajout d'un ad au tableau $ads
      */
     public function addAd($ad)
     {
@@ -30,36 +27,26 @@ class AdsManager extends Model
     public function getAd($id)
     {
         $results = array();
-        /** vous pouvez écrire les requêtes pour les différents managers de DB, ou bien vous focaliser sur celui de votre choix */
-        if (DB_MANAGER == PDO) // version PDO
-        {
+        
             $req = $this->getDatabase()->prepare("SELECT * FROM ads WHERE id = ? ");
             $req->execute([$id]);
             $ads = $req->fetchAll(PDO::FETCH_ASSOC);
             $req->closeCursor();
-        }
 
 
-        // on a récupéré tous les utilisateurs, on les ajoute au manager de users
+        // On ajoute chaque annonce au manager après les avoir récupérées
         foreach ($ads as $ad) {
             $new_ad = new Ad(
                 $ad['id'],
                 $ad['title'],
                 $ad['description'],
-                $ad['price']
+                $ad['price'],
+                $ad['idUser'],
+                $ad['categoryName']
             );
             return $new_ad;
         }
     }
-
-    /*public function getAds()
-    {
-        $req = $this->getDatabase()->prepare('SELECT ads.*, categories.categoryName FROM ads INNER JOIN categories_ads ON ads.id = categories_ads.id_annonce INNER JOIN categories ON categories_ads.id_categorie = categories.id');
-        $req->execute();
-        $ads = $req->fetchAll(PDO::FETCH_ASSOC);
-        $req->closeCursor();
-        return $ads;
-    }*/
 
     public function getAdsCurrentUser(){
         if (isLogin()) {
@@ -71,17 +58,14 @@ class AdsManager extends Model
     public function getAllAdsByUser($id_user)
     {
         $results = array();
-        /** vous pouvez écrire les requêtes pour les différents managers de DB, ou bien vous focaliser sur celui de votre choix */
-        if (DB_MANAGER == PDO) // version PDO
-        {
+
             $req = $this->getDatabase()->prepare("SELECT ads.id, ads.title, ads.description, ads.price, ads.idUser, users.username,categories.categoryName FROM ads LEFT JOIN users ON ads.idUser = users.id INNER JOIN categories_ads ON ads.id = categories_ads.id_annonce INNER JOIN categories ON categories_ads.id_categorie = categories.id WHERE idUser = ? ");
             
             $req->execute([$id_user]);
             $ads = $req->fetchAll(PDO::FETCH_ASSOC);
             $req->closeCursor();
-        }
         
-        // on a récupéré tous les utilisateurs, on les ajoute au manager de users
+        
         foreach ($ads as $ad) {
             $new_ad = new Ad(
                 $ad['id'],
@@ -96,21 +80,18 @@ class AdsManager extends Model
         return $results ;
     }
 
-    // charge tous les users dans le manager
+    // charge toutes les annonces dans le manager
     public function loadAllAds()
     {
-        /** vous pouvez écrire les requêtes pour les différents managers de DB, ou bien vous focaliser sur celui de votre choix */
-        if (DB_MANAGER == PDO) // version PDO
-        {
+
 
             $req = $this->getDatabase()->prepare('SELECT ads.*, categories.categoryName FROM ads INNER JOIN categories_ads ON ads.id = categories_ads.id_annonce INNER JOIN categories ON categories_ads.id_categorie = categories.id');
             $req->execute();
             $ads = $req->fetchAll(PDO::FETCH_ASSOC);
             $req->closeCursor();
-        }
         
 
-        // on a récupéré tous les utilisateurs, on les ajoute au manager de users
+        // on a récupéré toutes les annonces, on les ajoute à leur manager
         foreach ($ads as $ad) {
             $new_ad = new Ad(
                 $ad['id'],
@@ -129,8 +110,7 @@ class AdsManager extends Model
     {
         $type=null;
         $message=null;
-        if (DB_MANAGER == PDO) // version PDO
-        {
+
             try {
                 $req = $this->getDatabase()->prepare('UPDATE ads SET title = :title, description = :description, price = :price WHERE id = :id');
                 $req->execute([
@@ -153,7 +133,7 @@ class AdsManager extends Model
                 $type = 'error';
                 $message = 'Annonce non mise à jour: ' . $e->getMessage();
             }
-        }
+        
         $_SESSION['message'] = ['type' => $type, 'message' => $message];
         header("Location: " . URL . "ads");
     }
@@ -161,8 +141,8 @@ class AdsManager extends Model
     public function newAd($ad,$categoryId,$type=null,$message=null)
     {
         
-        if (DB_MANAGER == PDO) // version PDO
-        {
+
+        
             try {
                 $req = $this->getDatabase();
                 $req1= $req->prepare('INSERT INTO ads (title, description, price, idUser) VALUES (:title, :description, :price, :idUser)');
@@ -196,7 +176,7 @@ class AdsManager extends Model
                 $type = 'error';
                 $message = 'Annonce non ajoutée 2 ' . $e->getMessage();
             }
-        }
+        
         $_SESSION['message'] = ['type' => $type, 'message' => $message];
         header("Location: " . URL . "ad_form"); //redirection vers le formulaire en cas d'erreur dans l'ajout
     }
@@ -204,8 +184,7 @@ class AdsManager extends Model
     public function deleteAd($ad,$type=null,$message=null)
     {
    
-        if (DB_MANAGER == PDO) // version PDO
-        {
+
             try {
                 $req = $this->getDatabase()->prepare('DELETE FROM ads WHERE id = :id');
                 $req->execute(['id' => $ad]);
@@ -223,7 +202,7 @@ class AdsManager extends Model
                 $type = 'error';
                 $message = 'Annonce non supprimée: ' . $e->getMessage();
             }
-        }
+        
         $_SESSION['message'] = ['type' => $type, 'message' => $message];
         header("Location: " . URL . "ads");
     }

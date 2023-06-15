@@ -2,19 +2,16 @@
 require_once "Model.class.php";
 require_once "Category.class.php";
 
-/*******
- * Class UsersManager
- * La classe UserSManager a pour vocation de gérer les objets Users que l'applictaion va créer et manipuler
- */
+
 class CategoriesManager extends Model
 {
-    // on conserve les users dans un tableau privé
+    // on conserve les catégories dans un tableau privé
     private $categories;
 
 
     /****
-     * @param $user
-     * Ajout d'un user au tableau $users
+     * @param $categorie
+     * Ajout d'une catégorie au tableau $categories
      */
     public function addCategory($category)
     {
@@ -39,17 +36,12 @@ class CategoriesManager extends Model
     public function getCategory($id)
     {
         $results = array();
-        /** vous pouvez écrire les requêtes pour les différents managers de DB, ou bien vous focaliser sur celui de votre choix */
-        if (DB_MANAGER == PDO) // version PDO
-        {
+
             $req = $this->getDatabase()->prepare("SELECT * FROM categories WHERE id = ? ");
             $req->execute([$id]);
             $categories = $req->fetchAll(PDO::FETCH_ASSOC);
             $req->closeCursor();
-        }
-
-
-        // on a récupéré tous les utilisateurs, on les ajoute au manager de users
+        
         foreach ($categories as $category) {
             $new_category = new Category(
                 $category['id'],
@@ -61,19 +53,17 @@ class CategoriesManager extends Model
     }
 
 
-    // charge tous les users dans le manager
+    // charge toutes les catégories dans le manager
     public function loadAllCategories()
     {
-        /** vous pouvez écrire les requêtes pour les différents managers de DB, ou bien vous focaliser sur celui de votre choix */
-        if (DB_MANAGER == PDO) // version PDO
-        {
+        
             $req = $this->getDatabase()->prepare("SELECT * FROM categories ");
             $req->execute();
             $categories = $req->fetchAll(PDO::FETCH_ASSOC);
             $req->closeCursor();
-        } 
+        
 
-        // on a récupéré tous les utilisateurs, on les ajoute au manager de users
+        // on a récupéré toutes les catégories, on les ajoute à leur manager
         foreach ($categories as $category) {
             $new_category = new Category(
                 $category['id'],
@@ -90,8 +80,7 @@ class CategoriesManager extends Model
     {
         $type=null;
         $message=null;
-        if (DB_MANAGER == PDO) // version PDO
-        {
+        
             try {
                 $req = $this->getDatabase()->prepare('UPDATE categories SET categoryName = :categoryName, categoryDescription = :categoryDescription WHERE id = :id');
                 $req->execute([
@@ -113,7 +102,7 @@ class CategoriesManager extends Model
                 $type = 'error';
                 $message = 'Catégorie non mise à jour: ' . $e->getMessage();
             }
-        }
+        
         $_SESSION['message'] = ['type' => $type, 'message' => $message];
         header("Location: " . URL . "categories");
     }
@@ -121,8 +110,6 @@ class CategoriesManager extends Model
     public function newCategory($category,$type=null,$message=null)
     {
         
-        if (DB_MANAGER == PDO) // version PDO
-        {
             try {
                 $req = $this->getDatabase()->prepare('INSERT INTO categories (categoryName, categoryDescription) VALUES (:categoryName, :categoryDescription)');
                 $req->execute([
@@ -143,7 +130,7 @@ class CategoriesManager extends Model
                 $type = 'error';
                 $message = 'Catégorie non ajoutée: ' /*. $e->getMessage()*/;
             }
-        }
+        
         $_SESSION['message'] = ['type' => $type, 'message' => $message];
         header("Location: " . URL . "category_form"); //redirection vers le formulaire en cas d'erreur dans l'ajout
     }
@@ -151,8 +138,6 @@ class CategoriesManager extends Model
     public function deleteCategory($category,$type=null,$message=null)
     {
    
-        if (DB_MANAGER == PDO) // version PDO
-        {
             try {
                 $req = $this->getDatabase()->prepare('DELETE FROM categories WHERE id = :id');
                 $req->execute(['id' => $category]);
@@ -169,7 +154,7 @@ class CategoriesManager extends Model
                 // Une exception a été lancée, récupération du message de l'exception
                 $type = 'error';
                 $message = 'Catégorie non supprimée: ' . $e->getMessage();
-            }
+            
         }
         $_SESSION['message'] = ['type' => $type, 'message' => $message];
         header("Location: " . URL . "categories");
