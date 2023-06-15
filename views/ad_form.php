@@ -7,7 +7,14 @@
 
 
 
+<?php
 
+$testCategories = new CategoriesController();
+$categories = $testCategories->getCategories();
+
+
+
+?>
 
 
 <div class='row'>
@@ -33,6 +40,23 @@
             <input type='text' name='price' class='form-control' id='price' placeholder="Prix de vente" required
                 value='<?= isset($ad) ? htmlentities($ad->getPrice()) : '' ?>'>
         </div>
+        <div class='form-group my-3'>
+            <label for='id'>Catégorie de l'annonce :</label>
+            <!--  Générer une liste déroulante avec tous les abos disponibles -->
+            <select class='custom-select' name='categoryId'>
+                <?php foreach ($categories as $categorie) : ?>
+                    <option <?= (!empty($ad['categoryId']) && $ad['categoryId'] == $categorie['id']) ? 'selected' : '' ?> value='<?= $categorie['id'] ?>'>
+                        <?= htmlentities($categorie['categoryName']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <?php
+
+        // Je récupère l'id de la catégorie choisie, qui sera utilisé dans la requête d'insertion
+        //$idCategory = $_POST['idCategory'];
+        ?>
    
 <button type='submit' class='btn btn-primary my-3' name='submit'>Valider</button>
 </form>

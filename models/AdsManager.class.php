@@ -52,6 +52,15 @@ class AdsManager extends Model
         }
     }
 
+    /*public function getAds()
+    {
+        $req = $this->getDatabase()->prepare('SELECT ads.*, categories.categoryName FROM ads INNER JOIN categories_ads ON ads.id = categories_ads.id_annonce INNER JOIN categories ON categories_ads.id_categorie = categories.id');
+        $req->execute();
+        $ads = $req->fetchAll(PDO::FETCH_ASSOC);
+        $req->closeCursor();
+        return $ads;
+    }*/
+
     public function getAdsCurrentUser(){
         if (isLogin()) {
             $id_user = $_SESSION['id'];
@@ -65,7 +74,8 @@ class AdsManager extends Model
         /** vous pouvez écrire les requêtes pour les différents managers de DB, ou bien vous focaliser sur celui de votre choix */
         if (DB_MANAGER == PDO) // version PDO
         {
-            $req = $this->getDatabase()->prepare("SELECT ads.id, ads.title, ads.description, ads.price, ads.idUser, users.username FROM ads LEFT JOIN users ON ads.idUser = users.id where idUser = ? ");
+            $req = $this->getDatabase()->prepare("SELECT ads.id, ads.title, ads.description, ads.price, ads.idUser, users.username,categories.categoryName FROM ads LEFT JOIN users ON ads.idUser = users.id INNER JOIN categories_ads ON ads.id = categories_ads.id_annonce INNER JOIN categories ON categories_ads.id_categorie = categories.id WHERE idUser = ? ");
+            
             $req->execute([$id_user]);
             $ads = $req->fetchAll(PDO::FETCH_ASSOC);
             $req->closeCursor();
@@ -78,7 +88,8 @@ class AdsManager extends Model
                 $ad['title'],
                 $ad['description'],
                 $ad['price'],
-                $ad['idUser']
+                $ad['idUser'],
+                $ad['categoryName']
             );
             array_push($results, $new_ad);
         }
@@ -92,7 +103,7 @@ class AdsManager extends Model
         if (DB_MANAGER == PDO) // version PDO
         {
 
-            $req = $this->getDatabase()->prepare("SELECT * FROM ads ");
+            $req = $this->getDatabase()->prepare('SELECT ads.*, categories.categoryName FROM ads INNER JOIN categories_ads ON ads.id = categories_ads.id_annonce INNER JOIN categories ON categories_ads.id_categorie = categories.id');
             $req->execute();
             $ads = $req->fetchAll(PDO::FETCH_ASSOC);
             $req->closeCursor();
@@ -106,7 +117,8 @@ class AdsManager extends Model
                 $ad['title'],
                 $ad['description'],
                 $ad['price'],
-                $ad['idUser']
+                $ad['idUser'],
+                $ad['categoryName'] 
             );
             $this->addAd($new_ad);
         }
@@ -146,20 +158,31 @@ class AdsManager extends Model
         header("Location: " . URL . "ads");
     }
 
-    public function newAd($ad,$type=null,$message=null)
+    public function newAd($ad,$categoryId,$type=null,$message=null)
     {
         
         if (DB_MANAGER == PDO) // version PDO
         {
             try {
-                $req = $this->getDatabase()->prepare('INSERT INTO ads (title, description, price, idUser) VALUES (:title, :description, :price, :idUser)');
-                $req->execute([
+                $req = $this->getDatabase();
+                $req1= $req->prepare('INSERT INTO ads (title, description, price, idUser) VALUES (:title, :description, :price, :idUser)');
+                $req1->execute([
                     'title' => $ad->getTitle(),
                     'description' => $ad->getDescription(),
                     'price' => $ad->getPrice(),
                     'idUser' => $ad->getIdUser()
                 ]);
-                if ($req->rowCount()) {
+                // Récupération du dernier ID inséré dans la base de données, qui correspond à l'ID de l'annonce
+                $adId = $req->lastInsertId();
+
+                // Insertion dans la table categories_ads qui fait le lien entre ads et categories
+            $req2 = $req->prepare('INSERT INTO categories_ads (id_annonce, id_categorie) VALUES (:id_annonce, :id_categorie)');
+            $req2->execute([
+                'id_annonce' => $adId, 
+                'id_categorie' => $categoryId
+            ]);
+
+                if ($req1->rowCount() && $req2->rowCount()) {
                     $type = 'success';
                     $message = 'Annonce ajoutée';
                     $_SESSION['message'] = ['type' => $type, 'message' => $message];
@@ -167,11 +190,11 @@ class AdsManager extends Model
                     exit();
                 } else {
                     $type = 'error';
-                    $message = 'Annonce non ajoutée';
+                    $message = 'Annonce non ajoutée 1';
                 }
             } catch (Exception $e) {
                 $type = 'error';
-                $message = 'Annonce non ajoutée: ' . $e->getMessage();
+                $message = 'Annonce non ajoutée 2 ' . $e->getMessage();
             }
         }
         $_SESSION['message'] = ['type' => $type, 'message' => $message];

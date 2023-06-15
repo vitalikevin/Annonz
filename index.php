@@ -231,7 +231,6 @@ get('/informations', function(){
 
 get('/usersAds', function(){
     $controller = new AdsController();
-
     $controller->getAdsCurrentUser();
     
 });

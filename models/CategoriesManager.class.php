@@ -27,6 +27,15 @@ class CategoriesManager extends Model
         return $this->categories;
     }
 
+    public function getCategories()
+    {
+        $req = $this->getDatabase()->prepare('SELECT * FROM categories');
+        $req->execute();
+        $categories = $req->fetchAll(PDO::FETCH_ASSOC);
+        $req->closeCursor();
+        return $categories;
+    }
+
     public function getCategory($id)
     {
         $results = array();

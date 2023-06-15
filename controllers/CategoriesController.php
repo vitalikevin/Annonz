@@ -23,6 +23,13 @@ class CategoriesController
         require_once "views/categories.php";
     }
 
+    public function getCategories()
+    {
+        // on récupère le tableau des utilisateurs dans une variable $users
+        $categories = $this->categoryManager->getCategories();
+        return $categories;
+    }
+
     public function getCategory($id_category)
     {
         $category = $this->categoryManager->getCategory($id_category);

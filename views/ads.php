@@ -8,9 +8,6 @@
 
 
 
-
-
-
     <!-- Wrapper -->
     <div id="wrapper">
 
@@ -27,6 +24,7 @@
                                 <th>Titre</th>
                                 <th>Description</th>
                                 <th>Prix de vente</th>
+                                <th>Catégorie</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -45,7 +43,10 @@
                                     </td>
                                     <td>
                                         <?= htmlentities($ad->getPrice()) . " €"  ?>
-                                    </td>                                        
+                                    </td>
+                                    <td>
+                                        <?= htmlentities($ad->getCategoryName()) ?>
+                                    </td>                              
                                     <td>
 
 <!-- Boutons de modification et de suppression d'annonce, disponibles uniquement pour un admin ou pour l'utilisateur ayant publié l'annonce-->

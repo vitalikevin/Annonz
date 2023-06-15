@@ -23,6 +23,13 @@ class AdsController
         require_once "views/ads.php";
     }
 
+    public function getAds()
+    {
+        // on récupère le tableau des utilisateurs dans une variable $users
+        $ads = $this->adManager->getAds();
+        return $ads;
+    }
+
 public function getAdsCurrentUser()
     {
         $ads = $this->adManager->getAdsCurrentUser();
@@ -56,6 +63,7 @@ public function getAdsCurrentUser()
     
     public function addEditAd()
     {
+        $categoryId = $_POST['categoryId'];
         
             // Récupère les données du formulaire
             
@@ -66,9 +74,9 @@ public function getAdsCurrentUser()
                 
             } else {
                 // Crée un nouvel objet User
-                $ad = new Ad(null, $_POST['title'], $_POST['description'], $_POST['price'], $_POST['idUser'], $_POST['categoryName']);
+                $ad = new Ad(null, $_POST['title'], $_POST['description'], $_POST['price'], $_POST['idUser'],null);
                 // Enregistre l'utilisateur dans la base de données
-                $this->adManager->newAd($ad);
+                $this->adManager->newAd($ad, $categoryId);
             }
         }
 

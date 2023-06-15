@@ -7,16 +7,18 @@ class Ad extends Model
     private $description;
     private $price;
     private $idUser;
+    private $categoryName;
 
 
 
-    public function __construct($id,$title, $description, $price, $idUser)
+    public function __construct($id,$title, $description, $price, $idUser, $categoryName)
     {
         $this->id = $id ;
         $this->title = $title ;
         $this->description = $description ;
         $this->price = $price ;
         $this->idUser = $idUser;
+        $this->categoryName = $categoryName;
 
     }
 
@@ -88,7 +90,6 @@ class Ad extends Model
     {
         $this->idUser = $idUser;
     }
-
     public function getCategoryName()
     {
         return $this->categoryName;
@@ -99,6 +100,8 @@ class Ad extends Model
     {
         $this->categoryName = $categoryName;
     }
+
+ 
 
     public function createAd($title, $description, $price) {
 
