@@ -28,7 +28,7 @@ class AdsManager extends Model
     {
         $results = array();
         
-            $req = $this->getDatabase()->prepare("SELECT * FROM ads WHERE id = ? ");
+            $req = $this->getDatabase()->prepare("SELECT ads.*, categories.categoryName  FROM ads INNER JOIN categories_ads ON ads.id = categories_ads.id_annonce INNER JOIN categories ON categories_ads.id_categorie = categories.id WHERE ads.id = ? ");
             $req->execute([$id]);
             $ads = $req->fetchAll(PDO::FETCH_ASSOC);
             $req->closeCursor();
@@ -112,12 +112,13 @@ class AdsManager extends Model
         $message=null;
 
             try {
-                $req = $this->getDatabase()->prepare('UPDATE ads SET title = :title, description = :description, price = :price WHERE id = :id');
+                $req = $this->getDatabase()->prepare('UPDATE ads SET title = :title, description = :description, price = :price, categoryName = :categoryName WHERE id = :id');
                 $req->execute([
                     'id' => $ad->getId(),
                     'title' => $ad->getTitle(),
                     'description' => $ad->getDescription(),
-                    'price' => $ad->getPrice()
+                    'price' => $ad->getPrice(),
+                    'categoryName' => $ad->getCategoryName()
                 ]);
                 if ($req->rowCount()) {
                     // Une ligne a été mise à jour => message de succès

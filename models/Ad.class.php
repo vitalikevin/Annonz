@@ -103,32 +103,6 @@ class Ad extends Model
 
  
 
-    public function createAd($title, $description, $price) {
-
-        $database = $this->getDatabase();
-
-        try {
-            $createAdStmt = $database->prepare('INSERT INTO ads (title, description, price)
-            VALUES (:title, :description, :price)');
-            $createAdStmt->execute([
-                'title' => $title,
-                'description' => $description,
-                'price' => $price
-            ]);
-
-            if ($createAdStmt->rowCount()) {
-                $type = 'success';
-                $message = 'Annonce ajoutée';
-            } else {
-                $type = 'error';
-                $message = 'Annonce non ajoutée';
-            }
-        } catch (Exception $e) {
-            $type = 'error';
-            $message = 'Annonce non ajoutée: ' . $e->getMessage();
-        }
-
-        return ['type' => $type, 'message' => $message];
-    }
+    
 
 }
