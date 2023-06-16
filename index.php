@@ -232,8 +232,14 @@ get('/informations', function(){
 get('/usersAds', function(){
     $controller = new AdsController();
     $controller->getAdsCurrentUser();
-    
 });
+
+get('/hightech', function(){
+    $controller = new AdsController();
+    $controller->getAdsbyCategory();
+});
+
+
 
 
 
