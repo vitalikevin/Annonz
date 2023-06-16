@@ -50,7 +50,7 @@ public function getAdsCurrentUser()
             if (!empty($_POST['id'])){
                 
                 $ad = new Ad($_POST['id'], $_POST['title'], $_POST['description'], $_POST['price'], $_POST['idUser'],null);
-                $this->adManager->editAd($ad);
+                $this->adManager->editAd($ad, $categoryId);
                 
             } else {
                 // Création un nouvel objet Ad

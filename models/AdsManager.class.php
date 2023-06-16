@@ -106,37 +106,47 @@ class AdsManager extends Model
     }
 
 
-    public function editAd($ad)
+    public function editAd($ad, $categoryId)
     {
         $type=null;
         $message=null;
 
             try {
-                $req = $this->getDatabase()->prepare('UPDATE ads SET title = :title, description = :description, price = :price, categoryName = :categoryName WHERE id = :id');
-                $req->execute([
+                $req = $this->getDatabase();
+                $req1 = $req-> prepare('UPDATE ads SET title = :title, description = :description, price = :price WHERE id = :id');
+                $req1->execute([
                     'id' => $ad->getId(),
                     'title' => $ad->getTitle(),
                     'description' => $ad->getDescription(),
-                    'price' => $ad->getPrice(),
-                    'categoryName' => $ad->getCategoryName()
+                    'price' => $ad->getPrice()
                 ]);
-                if ($req->rowCount()) {
+
+
+
+
+                $req2 = $req->prepare('UPDATE categories_ads SET id_annonce = :id_annonce, id_categorie = :id_categorie WHERE id_annonce = :id_annonce');
+                    $req2->execute([
+                        'id_annonce' => $ad->getId(),
+                        'id_categorie' => $categoryId
+                    ]);
+                if ($req1->rowCount() OR $req2->rowCount()) {
                     // Une ligne a été mise à jour => message de succès
                     $type = 'success';
                     $message = 'Annonce mise à jour';
                 } else {
                     // Aucune ligne n'a été mise à jour => message d'erreur
                     $type = 'error';
-                    $message = 'Annonce non mise à jour';
+                    $message = 'Annonce non mise à jour 1';
                 }
             } catch (Exception $e) {
                 // Une exception a été lancée, récupération du message de l'exception
                 $type = 'error';
-                $message = 'Annonce non mise à jour: ' . $e->getMessage();
+                $message = 'Annonce non mise à jour 2 ' . $e->getMessage();
             }
         
         $_SESSION['message'] = ['type' => $type, 'message' => $message];
         header("Location: " . URL . "ads");
+
     }
 
     public function newAd($ad,$categoryId,$type=null,$message=null)
