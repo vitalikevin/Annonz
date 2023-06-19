@@ -14,7 +14,7 @@
         <!-- Main -->
         <section id="main" class="wrapper">
             <div class="inner">
-                <h1 class="major">Liste de toutes les annonces</h1>
+                <h1 class="major">Annonces</h1>
                 <!-- Table -->
                 <div class="table-wrapper">
                     <table>
@@ -25,6 +25,7 @@
                                 <th>Description</th>
                                 <th>Prix de vente</th>
                                 <th>Catégorie</th>
+                                <th>Photo principale</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -46,11 +47,15 @@
                                     </td>
                                     <td>
                                         <?= htmlentities($ad->getCategoryName()) ?>
-                                    </td>                              
+                                    </td>
+                                    <td>
+                                        <img class="ad-image" src="/<?= ROOT_DIR. "/" . $ad->getPath() ?>" alt="Image de l'annonce" width="300" height="200">
+                                    </td>
+                                                                  
                                     <td>
 
 <!-- Boutons de modification et de suppression d'annonce, disponibles uniquement pour un admin ou pour l'utilisateur ayant publié l'annonce-->
-                                    <?php if (isAdmin() OR belongsTo($ad)) { ?>
+                                    <?php if (isAdmin() == true OR belongsTo($ad)) { ?>
                                         <a class='btn btn-primary' href='ad_form/<?= $ad->getId() ?>' role='button'>Modifier</a>
                                         <a class='btn btn-primary' href='deleteAd/<?= $ad->getId() ?>' role='button' onclick="return confirm('Voulez-vous vraiment supprimer cette annonce ?')">Supprimer</a>
                                     <?php } ?>  

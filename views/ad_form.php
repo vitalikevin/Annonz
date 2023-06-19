@@ -22,7 +22,7 @@
         <h1 class='col-md-12 text-center border border-dark bg-primary text-white'>Liste des annonces</h1>
     </div>
     <div class='row'>
-        <form method='post' action='<?= URL ?>addEditAd'>
+        <form method='post' action='<?= URL ?>addEditAd' enctype="multipart/form-data">
             <!--  Ajouter the ID to the form if it exists but make the field hidden -->
             <input type='hidden' name='id' value='<?= isset($ad) ? $ad->getId() : '' ?>'>
             <input type='hidden' name='idUser' value='<?= $_SESSION['id'] ?>'>
@@ -53,6 +53,14 @@
                         </option>
                     <?php endforeach; ?>
                 </select>
+                <div class='form-group my-3'>
+                <label for='photo'>Photo principale</label>
+                <input type='file' name='photo' class='form-control' id='photo' placeholder="Photo principale" required
+                    value='<?= isset($ad) ? htmlentities($ad->getPath()) : '' ?>'>
+            </div>
+
+
+
 
 
             </div>

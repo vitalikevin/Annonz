@@ -17,7 +17,7 @@ require_once __DIR__.'/librairies/phprouter/router.php';
 
 
 /***** SETTINGS/CONSTANTES *****/
-define("ROOT_DIR", "ProjetMvc2") ; // répertoire racine TODO à définir selon le nom de votre projet (dossier qui suit "localhost")
+define("ROOT_DIR", "projet") ; // répertoire racine TODO à définir selon le nom de votre projet (dossier qui suit "localhost")
 // On définit les différents modes d'accès aux données
 define("PDO", 0) ; // connexion par PDO
 define("MEDOO", 1) ; // Connexion par Medoo
@@ -234,9 +234,9 @@ get('/usersAds', function(){
     $controller->getAdsCurrentUser();
 });
 
-get('/hightech', function(){
+get('/ads/$category', function($category){
     $controller = new AdsController();
-    $controller->getAdsbyCategory();
+    $controller -> getAdsbyCategory($category);
 });
 
 

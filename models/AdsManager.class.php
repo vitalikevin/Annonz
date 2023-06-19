@@ -28,7 +28,7 @@ class AdsManager extends Model
     {
         $results = array();
         
-            $req = $this->getDatabase()->prepare("SELECT ads.*, categories.categoryName  FROM ads INNER JOIN categories_ads ON ads.id = categories_ads.id_annonce INNER JOIN categories ON categories_ads.id_categorie = categories.id WHERE ads.id = ? ");
+            $req = $this->getDatabase()->prepare("SELECT ads.*, pictures.path, categories.categoryName  FROM ads INNER JOIN pictures ON ads.id = pictures.idAd INNER JOIN categories_ads ON ads.id = categories_ads.id_annonce INNER JOIN categories ON categories_ads.id_categorie = categories.id WHERE ads.id = ? ");
             $req->execute([$id]);
             $ads = $req->fetchAll(PDO::FETCH_ASSOC);
             $req->closeCursor();
@@ -42,7 +42,8 @@ class AdsManager extends Model
                 $ad['description'],
                 $ad['price'],
                 $ad['idUser'],
-                $ad['categoryName']
+                $ad['categoryName'],
+                $ad['path']
             );
             return $new_ad;
         }
@@ -59,7 +60,7 @@ class AdsManager extends Model
     {
         $results = array();
 
-            $req = $this->getDatabase()->prepare("SELECT ads.id, ads.title, ads.description, ads.price, ads.idUser, users.username,categories.categoryName FROM ads LEFT JOIN users ON ads.idUser = users.id INNER JOIN categories_ads ON ads.id = categories_ads.id_annonce INNER JOIN categories ON categories_ads.id_categorie = categories.id WHERE idUser = ? ");
+            $req = $this->getDatabase()->prepare("SELECT ads.id, ads.title, ads.description, ads.price, ads.idUser, pictures.path, users.username,categories.categoryName FROM ads INNER JOIN pictures ON ads.id = pictures.idAd LEFT JOIN users ON ads.idUser = users.id INNER JOIN categories_ads ON ads.id = categories_ads.id_annonce INNER JOIN categories ON categories_ads.id_categorie = categories.id WHERE idUser = ? ");
             
             $req->execute([$id_user]);
             $ads = $req->fetchAll(PDO::FETCH_ASSOC);
@@ -73,7 +74,8 @@ class AdsManager extends Model
                 $ad['description'],
                 $ad['price'],
                 $ad['idUser'],
-                $ad['categoryName']
+                $ad['categoryName'],
+                $ad['path']
             );
             array_push($results, $new_ad);
         }
@@ -85,7 +87,7 @@ class AdsManager extends Model
     {
 
 
-            $req = $this->getDatabase()->prepare('SELECT ads.*, categories.categoryName FROM ads INNER JOIN categories_ads ON ads.id = categories_ads.id_annonce INNER JOIN categories ON categories_ads.id_categorie = categories.id');
+            $req = $this->getDatabase()->prepare('SELECT ads.*, categories.categoryName, pictures.path FROM ads INNER JOIN pictures ON ads.id = pictures.idAD INNER JOIN categories_ads ON ads.id = categories_ads.id_annonce INNER JOIN categories ON categories_ads.id_categorie = categories.id');
             $req->execute();
             $ads = $req->fetchAll(PDO::FETCH_ASSOC);
             $req->closeCursor();
@@ -99,14 +101,15 @@ class AdsManager extends Model
                 $ad['description'],
                 $ad['price'],
                 $ad['idUser'],
-                $ad['categoryName'] 
+                $ad['categoryName'],
+                $ad['path']
             );
             $this->addAd($new_ad);
         }
     }
 
 
-    public function editAd($ad, $categoryId)
+    public function editAd($ad, $categoryId,$path)
     {
         $type=null;
         $message=null;
@@ -129,7 +132,15 @@ class AdsManager extends Model
                         'id_annonce' => $ad->getId(),
                         'id_categorie' => $categoryId
                     ]);
-                if ($req1->rowCount() OR $req2->rowCount()) {
+
+                    $req3 = $req->prepare ('UPDATE pictures SET idAd = :idAd, path = :path WHERE adId = :adId');
+                    $req3->execute ([
+                        'adId'=>$ad->getId(),
+                        'path'=>$path
+                    ]);
+
+
+                if ($req1->rowCount() && $req2->rowCount() && $req3->rowCount()) {
                     // Une ligne a été mise à jour => message de succès
                     $type = 'success';
                     $message = 'Annonce mise à jour';
@@ -149,7 +160,7 @@ class AdsManager extends Model
 
     }
 
-    public function newAd($ad,$categoryId,$type=null,$message=null)
+    public function newAd($ad,$categoryId,$path,$type=null,$message=null)
     {
         
 
@@ -173,7 +184,14 @@ class AdsManager extends Model
                 'id_categorie' => $categoryId
             ]);
 
-                if ($req1->rowCount() && $req2->rowCount()) {
+            $req3 = $req->prepare ('INSERT INTO pictures (idAd, path) VALUES (:adId, :path)');
+            $req3->execute ([
+                'adId'=>$adId,
+                'path'=>$path
+            ]);
+
+
+                if ($req1->rowCount() && $req2->rowCount() && $req3->rowCount()) {
                     $type = 'success';
                     $message = 'Annonce ajoutée';
                     $_SESSION['message'] = ['type' => $type, 'message' => $message];
@@ -216,6 +234,33 @@ class AdsManager extends Model
         
         $_SESSION['message'] = ['type' => $type, 'message' => $message];
         header("Location: " . URL . "ads");
+    }
+
+    public function getAdsByCategory($category)
+    {
+        $results = array();
+
+            $req = $this->getDatabase()->prepare("SELECT ads.id, ads.title, ads.description, ads.price, ads.idUser, pictures.path, users.username,categories.categoryName FROM ads LEFT JOIN users ON ads.idUser = users.id INNER JOIN pictures ON ads.id = pictures.idAd INNER JOIN categories_ads ON ads.id = categories_ads.id_annonce INNER JOIN categories ON categories_ads.id_categorie = categories.id WHERE categoryName = ? ");
+            
+            $req->execute([$category]);
+            $ads = $req->fetchAll(PDO::FETCH_ASSOC);
+            $req->closeCursor();
+        
+        
+        foreach ($ads as $ad) {
+            $new_ad = new Ad(
+                $ad['id'],
+                $ad['title'],
+                $ad['description'],
+                $ad['price'],
+                $ad['idUser'],
+                $ad['categoryName'],
+                $ad['path']
+            );
+            var_dump($new_ad);
+            array_push($results, $new_ad);
+        }
+        return $results ;
     }
   
 }

@@ -22,7 +22,7 @@
     <h1 class='col-md-12 text-center border border-dark bg-primary text-white'>Formulaire d'inscription</h1>
 </div>
 <div class='row'>
-    <form method='post' action='<?= URL ?>addEditUser'>
+    <form method='post' action='<?= URL ?>addEditUser' enctype="multipart/form-data">
         <!--  Ajouter the ID to the form if it exists but make the field hidden -->
         <input type='hidden' name='id' value='<?= isset($user) ? $user->getId() : '' ?>'>
         <div class='form-group my-3'>

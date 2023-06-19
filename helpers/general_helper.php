@@ -13,7 +13,7 @@ function belongsTo($ad) {
 
 function isAdmin() {
     if (!empty($_SESSION)) {
-        return ($_SESSION['isAdmin'] === true);
+        return ($_SESSION['isAdmin'] == true);
     }
     return false;
 }

@@ -35,33 +35,50 @@ public function getAdsCurrentUser()
         require_once "views/ad_form.php";
     }
 
-    public function getAdsByUser($id_user)
-    {
-        $ads = $this->adManager->getAllAdsByUser($id_user) ;        
-            require_once "views/ads.php" ;
-    }
     
     public function addEditAd()
     {
         $categoryId = $_POST['categoryId'];
         
             // Récupération des données du formulaire
+
+            $photo = $_FILES['photo'];
+
+            if ($photo['error'] === UPLOAD_ERR_OK) {
+                $uploadDir = 'photos/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0777, true); //création du répertoire de destination s'il n'existe pas
+                }
+                $fileName = uniqid() . '_' . $photo['name'];
+                $path = $uploadDir . $fileName;
+                move_uploaded_file($photo['tmp_name'], $path);
+            }
+
             
             if (!empty($_POST['id'])){
                 
-                $ad = new Ad($_POST['id'], $_POST['title'], $_POST['description'], $_POST['price'], $_POST['idUser'],null);
-                $this->adManager->editAd($ad, $categoryId);
+                $ad = new Ad($_POST['id'], $_POST['title'], $_POST['description'], $_POST['price'], $_POST['idUser'],null,$path);
+                $this->adManager->editAd($ad, $categoryId,$path);
                 
             } else {
                 // Création un nouvel objet Ad
-                $ad = new Ad(null, $_POST['title'], $_POST['description'], $_POST['price'], $_POST['idUser'],null);
+                $ad = new Ad(null, $_POST['title'], $_POST['description'], $_POST['price'], $_POST['idUser'],null,$path);
                 // Enregistrement de l'annonce dans la base de données
-                $this->adManager->newAd($ad, $categoryId);
+                $this->adManager->newAd($ad, $categoryId,$path);
+
             }
+
+        
         }
 
         public function deleteAd($ad)
     {
             $this->adManager->deleteAd($ad);      
+    }
+
+    public function getAdsByCategory($category)
+    {
+        $ads = $this->adManager->getAdsByCategory($category);
+        require_once "views/ads.php" ;       
     }
 }
