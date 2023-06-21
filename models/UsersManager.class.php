@@ -199,7 +199,7 @@ class UsersManager extends Model
 
 
         try {
-            $req = $this->getDatabase()->prepare('DELETE FROM users WHERE id = :id');
+            $req = $this->getDatabase()->prepare('DELETE FROM users WHERE id = :id AND ' .isAdmin());
             $req->execute(['id' => $user]);
             if ($req->rowCount()) {
                 // Une ligne a été mise à jour => message de succès

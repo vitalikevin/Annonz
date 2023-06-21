@@ -7,7 +7,7 @@ class AuthentificationController extends Model
 {
 
 
-
+// Connexion d'un utilisateur
     public function logUser()
     {
         $email = filter_var(filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL), FILTER_VALIDATE_EMAIL);
@@ -50,6 +50,8 @@ class AuthentificationController extends Model
     header("Location: " . URL . "index");
     }
 
+// Validation du compte via mail
+
     function activUser($token) {
 
         if (DB_MANAGER == PDO) {
@@ -64,27 +66,22 @@ class AuthentificationController extends Model
                     
                         $req->execute(['token'=> $token]);
                         if ($req->rowCount()){
-                             //return array("success", "Votre compte est activé, vous pouvez vous connecter"); 
                              $type = 'success';
                              $message = 'Votre compte a bien été activé, vous pouvez dès maintenant vous connecter en utilisant vos identifiants';
 
                         }else {
-                        //return array("error", "Problème lors de l'activation"); 
                         $type = 'error';
                         $message = 'Problème lors de l\'activation';
                     }
                 } catch (Exception $e) {
-                    //return array("error",  $e->getMessage());
                     $type = 'error';
                     $message = 'Problème lors de l\'activation';
                 }              
             }else {
-            //return array("error", "Ce compte est déjà actif");
             $type = 'error';
             $message = 'Ce compte est déjà actif';
             }
         }else {
-        //return array("error", "Lien invalide !");
         $type = 'error';
         $message = 'Lien invalide !';}
         
@@ -93,9 +90,10 @@ class AuthentificationController extends Model
     header("Location: " . URL . "index");
 }
 
+// Mot de passe oublié : réception d'un mail contenant un lien servant à le réinitialiser
+
 function forgotPassword() {
     $email = filter_var(filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL), FILTER_VALIDATE_EMAIL);
-    //$email = filter_var(filter_input(INPUT_POST, $_POST['email'], FILTER_SANITIZE_EMAIL), FILTER_VALIDATE_EMAIL); --> pourquoi mettre $_POST['email'] ça fait que getUserByEmail return false ???
     $user = new User(null, null, null, $email, null, null, null, null, null, null, null, null);
     $userInfos = $user->getUserByEmail($email);
 
@@ -110,35 +108,32 @@ function forgotPassword() {
             if ($req->rowCount()){
                 $url = URL;
                 $content="<p><a href='$url/resetPassword/$token'>Merci de cliquer sur ce lien pour réinitialiser votre mot de passe</a></p>";
-                // Pour envoyer un mail HTML, l'en-tête Content-type doit être défini
                 $headers = array(
                     'MIME-Version' => '1.0',
                     'Content-type' => 'text/html; charset=iso-8859-1',
                     'X-Mailer' => 'PHP/' . phpversion()
                 );
                 mail($email,"Réinitialisation de mot de passe", $content, $headers);
-                //return array("success", "Vous allez recevoir un mail pour réinitialiser votre mot de passe".$content);
                 $type = "success";
                 $message = "Vous allez recevoir un mail pour réinitialiser votre mot de passe";
             }else {
-            //return array("error", "Problème lors du process de réinitialisation");
             $type = "error";
             $message = "Problème lors du process de réinitialisation 1";
             }
             
         } catch (Exception $e) {
-            //return array("error",  $e->getMessage());
             $type = "error";
             $message = "Problème lors du process de réinitialisation";
         }
     } else {
-    //array("error", "Aucun compte ne correspond à cet email.");
     $type = "error";
     $message = "Aucun compte ne correspond à cet email";
     }
     $_SESSION['message'] = ['type' => $type, 'message' => $message];
     header("Location: " . URL . "index");
 }
+
+//Réinitialisation du mot de passe après avoir cliqué sur le lien
 
 function resetPassword() {
     
@@ -163,36 +158,29 @@ function resetPassword() {
                                 'X-Mailer' => 'PHP/' . phpversion()
                             );
                             mail($userInfos['email'],"Réinitialisation de mot de passe", $content, $headers);
-                            //return array("success", "Votre mot de passe a bien été réinitialisé");
                             $type = "success";
                             $message = "Votre mot de passe a bien été réinitialisé, vous pouvez maintenant vous connecter";
                         }else {
-                            //return array("error", "Problème lors de la réinitialisation");
                             $type = "error";
                             $message = "Problème lors de la réinitialisation 1";
                         }
                     } catch (Exception $e) {
-                        //return array("error",  $e->getMessage());
                         $type = "error";
                         $message = "Problème lors de la réinitialisation 2";
                     } 
                 }else {
-                    //return array("error", "Le mot de passe doit comporter au moins 8 caractères dont au moins 1 chiffre, 1 minuscule, 1 majuscule et 1 caractère spécial");
                     $type = "error";
                     $message = "Le mot de passe doit comporter au moins 8 caractères dont au moins 1 chiffre, 1 minuscule, 1 majuscule et 1 caractère spécial";
                 }
             }else {
-                //return array("error", "Les 2 saisies de mot de passe doivent être identiques.");
                 $type = "error";
                 $message = "Les 2 saisies de mot de passe doivent être identiques.";
             }
         }else {
-            //return array("error", "Le lien n'est plus valide ! Veuillez <a href='?p=forgot'>recommencer</a>");
             $type = "error";
             $message = "Le lien n'est plus valide ! Veuillez recommencer";
         }
     }else {
-        //return array("error", "Les données ont été corrompues ! Veuillez <a href='?p=forgot'>recommencer</a>");
         $type = "error";
         $message = "Les données ont été corrompues ! Veuillez recommencer";
     }
@@ -200,9 +188,5 @@ function resetPassword() {
     header("Location: " . URL . "index");
 }
 
-public function logout(){
-    session_unset();
-	session_destroy();
-}
 
 }

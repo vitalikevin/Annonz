@@ -15,7 +15,7 @@ abstract class Model
 
     // à compléter avec les infos de votre base de données
     private const HOST = 'localhost';
-    private const DB = 'projet_annonces';
+    private const DB = 'anonzz';
     private const USER = 'root';
     private const PWD = '';
     
@@ -27,8 +27,7 @@ abstract class Model
      * initialiser la connexion avec la base de données
      */
     private static function initDatabase(){
-        if (DB_MANAGER == PDO)
-        {
+
             self::$database = new PDO('mysql:host='. self::HOST . ';dbname='. self::DB,
                 self::USER,
                 self::PWD,
@@ -36,19 +35,8 @@ abstract class Model
             );
             //gestion des erreurs
             self::$database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
-        }
-        else if (DB_MANAGER == MEDOO)
-        {
-            self::$database = new Medoo\Medoo([
-                'database_type' => 'mysql',
-                'database_name' => self::DB,
-                'server' => self::HOST,
-                'username' => self::USER,
-                'password' => self::PWD,
-                "charset" => "utf8",
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            ]);
-        }
+        
+        
     }
 
     //design pattern singleton

@@ -5,8 +5,9 @@ if (isLogin()) {
 } ?>
 
 
-<?php require_once "views/common/header.php"; ?>
+
 <body class="is-preload">
+<?php require_once "views/common/header.php"; ?>
 
 <?php require_once "views/common/navbar.php"; ?>
 
@@ -22,34 +23,13 @@ if (isLogin()) {
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 	<link rel="stylesheet" href="public/assets/css/moncss.css" />
+	<link rel="stylesheet" href="<?=URL?>public/assets/css/moncss.css" />
+
 
 </head>
 
 
 
-	<!-- Header -->
-	<header id="header">
-		<nav>
-			<ul>
-
-
-				<!-- Boutons disponibles uniquement pour les utilisateurs connectés-->
-
-				<?php if (isLogin()) { ?>
-					<li><a href="account" class="<?= str_contains(FULL_URL, "logout") ? "active" : "" ?>">Mon compte</a></li>
-					<li><a href="logout" class="<?= str_contains(FULL_URL, "logout") ? "active" : "" ?>">Déconnexion</a></li>
-
-				<?php } else { ?>
-					<li><a href="user_form" class="<?= str_contains(FULL_URL, "user_form") ? "active" : "" ?>">Inscription</a></li>
-					<li><a href="connexion" class="<?= str_contains(FULL_URL, "connexion") ? "active" : "" ?>">Connexion</a></li>
-				<?php } ?>
-
-
-
-
-			</ul>
-		</nav>
-	</header>
 
 
 	</div>

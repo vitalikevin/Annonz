@@ -25,3 +25,9 @@
   object-fit: cover;
   object-position: center;
 }
+
+
+  #texteCache {
+    display: none !important;
+  }
+

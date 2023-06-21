@@ -30,8 +30,12 @@
                         </thead>
                         <tbody>
                             <?php
-                            // $users est défini dans le controlleur, on peut l'utiliser dans la vue
-                            foreach ($ads as $ad) { ?>
+                            // $ads est défini dans le controlleur, on peut l'utiliser dans la vue
+                            
+                            foreach ($ads as $ad) { 
+                                if (isAdmin() OR $ad->getActive()) // affichage uniquement des annonces actives pour un visiteur / utilisateur non admin
+                                {
+                                ?>
                                 <tr>
                                     <td>
                                         <?= htmlentities($ad->getId()) ?>
@@ -51,17 +55,32 @@
                                     <td>
                                         <img class="ad-image" src="/<?= ROOT_DIR. "/" . $ad->getPath() ?>" alt="Image de l'annonce" width="300" height="200">
                                     </td>
-                                                                  
+                                    <?php } ?>                         
                                     <td>
 
 <!-- Boutons de modification et de suppression d'annonce, disponibles uniquement pour un admin ou pour l'utilisateur ayant publié l'annonce-->
-                                    <?php if (isAdmin() == true OR belongsTo($ad)) { ?>
+                                    <?php if ($ad->getActive() && (isAdmin() == true OR belongsTo($ad))) { ?>
                                         <a class='btn btn-primary' href='ad_form/<?= $ad->getId() ?>' role='button'>Modifier</a>
                                         <a class='btn btn-primary' href='deleteAd/<?= $ad->getId() ?>' role='button' onclick="return confirm('Voulez-vous vraiment supprimer cette annonce ?')">Supprimer</a>
-                                    <?php } ?>  
+                                    <?php } ?>
+
+                                    <?php if(isAdmin() == true && $ad->getActive() == false) { ?>
+                                        <a class='btn btn-primary' href='activateAd/<?= $ad->getId() ?>' role='button'>Valider</a>
+
+                                    <?php } ?>
+  
                                     <td>
                                 </tr>
                             <?php } ?>
+                            <?php $adsOffline = 0;
+                            foreach ($ads as $ad) {
+                                if (!$ad->getActive() && belongsTo($ad)) {
+                                    $adsOffline++;
+                                }
+                            }
+                            if ($adsOffline >0 ) {
+                            echo "Vous avez actuellement " .$adsOffline. " annonce(s) en attente de validation. Une annonce doit être approuvée par un administrateur avant d'être publiée.<br><br><br><br>";}
+                            ?>
                         </tbody>
                     </table>
                 </div>

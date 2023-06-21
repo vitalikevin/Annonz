@@ -18,7 +18,7 @@ class AdsController
     {
         // récupération du tableau des annonces dans une variable $ads
         $ads = $this->adManager->getAllAds() ;
-        // chargement de la vue qui utilise $users
+        // chargement de la vue qui utilise $ads
         require_once "views/ads.php";
     }
 
@@ -35,6 +35,11 @@ public function getAdsCurrentUser()
         require_once "views/ad_form.php";
     }
 
+    public function getAdsByCategory($category)
+    {
+        $ads = $this->adManager->getAdsByCategory($category);
+        require_once "views/ads.php" ;       
+    }
     
     public function addEditAd()
     {
@@ -57,18 +62,15 @@ public function getAdsCurrentUser()
             
             if (!empty($_POST['id'])){
                 
-                $ad = new Ad($_POST['id'], $_POST['title'], $_POST['description'], $_POST['price'], $_POST['idUser'],null,$path);
+                $ad = new Ad($_POST['id'], $_POST['title'], $_POST['description'], $_POST['price'], $_POST['idUser'],null,$path, null);
                 $this->adManager->editAd($ad, $categoryId,$path);
                 
             } else {
                 // Création un nouvel objet Ad
-                $ad = new Ad(null, $_POST['title'], $_POST['description'], $_POST['price'], $_POST['idUser'],null,$path);
+                $ad = new Ad(null, $_POST['title'], $_POST['description'], $_POST['price'], $_POST['idUser'],null,$path, null);
                 // Enregistrement de l'annonce dans la base de données
                 $this->adManager->newAd($ad, $categoryId,$path);
-
             }
-
-        
         }
 
         public function deleteAd($ad)
@@ -76,9 +78,10 @@ public function getAdsCurrentUser()
             $this->adManager->deleteAd($ad);      
     }
 
-    public function getAdsByCategory($category)
-    {
-        $ads = $this->adManager->getAdsByCategory($category);
-        require_once "views/ads.php" ;       
+    public function activateAd($id_ad) {
+
+        $ad = new Ad($id_ad,null,null,null,null,null,null,null);
+        $this->adManager->activateAd($ad);
     }
+
 }
