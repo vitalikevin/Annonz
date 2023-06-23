@@ -11,6 +11,15 @@ if (isLogin()) {
 
 <?php require_once "views/common/navbar.php"; ?>
 
+<!-- Affichage des différentes messages de succès ou d'erreur des différentes actions (connexion, ajout d'une annonce,...) -->
+
+
+<?php if (isset($_SESSION['message'])) {
+    $message = $_SESSION['message'];
+    echo '<div class="' . $message['type'] . '">' . $message['message'] . '</div>'; //affiche le 'message' avec le style de la class 'type'
+    unset($_SESSION['message']); // Supprime le message de la session pour le vider
+} ?>
+
 <!DOCTYPE HTML>
 <!--
 	Hyperspace by HTML5 UP

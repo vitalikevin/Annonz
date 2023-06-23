@@ -6,9 +6,6 @@ date_default_timezone_set('Europe/Paris');
 
 
 
-/***** REQUIRES/INCLUDES *****/
-// Chargement du framework Medoo
-include_once ("./librairies/medoo/Medoo.php");
 // Chargement du framework de routage PHP Router
 require_once __DIR__.'/librairies/phprouter/router.php';
 
@@ -17,12 +14,10 @@ require_once __DIR__.'/librairies/phprouter/router.php';
 
 
 /***** SETTINGS/CONSTANTES *****/
-define("ROOT_DIR", "annonz") ; // répertoire racine TODO à définir selon le nom de votre projet (dossier qui suit "localhost")
-// On définit les différents modes d'accès aux données
+define("ROOT_DIR", "annonz") ;
 define("PDO", 0) ; // connexion par PDO
-define("MEDOO", 1) ; // Connexion par Medoo
 // Choix du mode de connexion
-define("DB_MANAGER", PDO); // TODO choisissez entre PDO ou MEDOO
+define("DB_MANAGER", PDO); 
 // Création de deux constantes URL et FULL_URL qui pourront servir dans les controlleurs et/ou vues
 define("URL", str_replace("index.php", "", (isset($_SERVER['HTTPS']) ? "https" : "http") .
     "://$_SERVER[HTTP_HOST]$_SERVER[PHP_SELF]"));
@@ -37,7 +32,6 @@ require_once "helpers/general_helper.php";
 
 /******** CONTROLLERS *********/
 // inclusion des controllers (TODO ajoutez les vôtres)
-require_once "controllers/WelcomeController.php";
 require_once "controllers/UsersController.php";
 require_once "controllers/CategoriesController.php";
 require_once "controllers/AdsController.php";
@@ -53,54 +47,17 @@ require_once "controllers/AuthentificationController.php";
 // Pour les routes GET on utilise la fonction get()
 // Pour invoquer un contrôleur on crée un callback
 
-/* ETAPE 1 POUR AFFICHER LE MESSAGE SUR LA PAGE INDEX APRES LA CONNEXION*/
 
-
-if (isset($_SESSION['message'])) {
-    $message = $_SESSION['message'];
-    echo '<div class="' . $message['type'] . '">' . $message['message'] . '</div>'; //affiche le 'message' avec le style de la class 'type'
-    unset($_SESSION['message']); // Supprime le message de la session pour le vider
-}
-
-
-
-
-
-get('/testjson', function(){
-    $controller = new WelcomeController();
-    $controller->testjson();
-});
-
+// Page d'accueil
 
 
 get('/index', function(){
-    $controller = new WelcomeController();
-    $controller->index();
+    require_once "views/index.php";
 });
 
-get('/home', function(){
-    $controller = new WelcomeController();
-    $controller->index();
-});
-
-get('/', function(){
-    $controller = new WelcomeController();
-    $controller->index();
-});
-
-// A PARTIR D'ICI : VRAIES ROUTES DU PROJET
+// Liste des catégories
 
 
-
-get('/index', function(){
-    $controller = new WelcomeController();
-    $controller->index();
-});
-
-get('/home', function(){
-    $controller = new WelcomeController();
-    $controller->index();
-});
 
 get('/categories', function(){
     $controller = new CategoriesController();
@@ -108,10 +65,16 @@ get('/categories', function(){
     require_once "views/categories.php";
 });
 
+// Formulaire d'ajout d'une catégorie
+
+
 get('/category_form', function(){
     echo URL;
     include "views/category_form.php";
 });
+
+// Formulaire de modification d'une catégorie
+
 
 get('/category_form/$id_category', function($id_category){
     echo URL;
@@ -119,26 +82,37 @@ get('/category_form/$id_category', function($id_category){
     $controller -> getCategory($id_category);
 });
 
+// Ajout / modification d'une catégorie dans la base de données
+
 post('/addEditCategory', function(){
     
     $controller = new CategoriesController();
     $controller -> addEditCategory();
 });
 
+// Suppression d'une catégorie de la base de données
+
 get('/deleteCategory/$id_category', function($id_category){
     $controller = new CategoriesController();
     $controller->deleteCategory($id_category);
 });
+
+// Liste de toutes les annonces
 
 get('/ads', function(){
     $controller = new AdsController();
     $controller->display_all_ads();
 });
 
+// Formulaire d'ajout d'une annonce
+
 get('/ad_form', function(){
     echo URL;
     include "views/ad_form.php";
 });
+
+// Formulaire de modification d'une annonce
+
 
 get('/ad_form/$id_ad', function($id_ad){
     echo URL;
@@ -146,25 +120,35 @@ get('/ad_form/$id_ad', function($id_ad){
     $controller -> getAd($id_ad);
 });
 
+// Ajout / modification d'une annonce dans la base de données
+
 post('/addEditAd', function(){
     
     $controller = new AdsController();
     $controller -> addEditAd();
 });
 
+// Suppression d'une annonce de la base de données
+
 get('/deleteAd/$id_ad', function($id_ad){
     $controller = new AdsController();
     $controller->deleteAd($id_ad);
 });
+
+// Liste des utilisateurs
 
 get('/users', function(){
     $controller = new UsersController();
     $controller->display_all_users();
 });
 
+// Formulaire d'inscription
+
 get('/user_form', function(){
     include "views/user_form.php";
 });
+
+// Formulaire de modification d'un utilisateur
 
 get('/user_form/$id_user', function($id_user){
     echo URL;
@@ -172,72 +156,100 @@ get('/user_form/$id_user', function($id_user){
     $controller -> getUser($id_user);
 });
 
+// Ajout / modification d'un utilisateur dans la base de données
+
 post('/addEditUser', function(){
     $controller = new UsersController();
     $controller -> addEditUser();
 });
+
+// Suppression d'un utilisateur de la base de données
 
 get('/deleteUser/$id_user', function($id_user){
     $controller = new UsersController();
     $controller->deleteUser($id_user);
 });
 
+// Formulaire de connexion
+
 get('/connexion', function(){
     include "views/connection_form.php";
 });
+
+// Vérification des informations lors d'une tentative de connexion
 
 post('/authentification', function(){
     $controller = new AuthentificationController();
     $controller -> logUser();
 });
 
+// Validation du compte d'un utilisateur via le lien figurant dans le mail reçu lors de l'inscription
+
 get('/validation/$token', function($token){
     $controller = new AuthentificationController();
     $controller -> activUser($token);
 });
 
+// Formulaire de mot de passe oublié
+
 get('/forgotPassword', function(){
     include "views/forgot_password.php";
 });
+
+// Envoi d'un mail de réinitialisation de mot de passe
 
 post('/forgotPassword2', function(){
     $controller = new AuthentificationController();
     $controller -> forgotPassword();
 });
 
+// Formulaire de réinitialisation de mot de passe
+
 get('/resetPassword/$token', function($token){
     include "views/reset_password.php";
 });
+
+// Vérification des informations en cas de tentative de réinitialisation de mot de passe
 
 post('/resetPassword', function(){
     $controller = new AuthentificationController();
     $controller -> resetPassword();
 });
 
+// Déconnexion
+
 get('/logout', function(){
     include "views/logout.php";
 });
 
+// Rubrique Mon compte
+
 get('/account', function(){
     include "views/account.php";
 });
+
+// Affichage des informations personnelles de l'utilisateur connecté
 
 get('/informations', function(){
     include "views/informations.php";
 });
 
 
-// Route pour voir les annonces d'un user en particulier 
+// Affichage de toutes les annonces publiées par l'utilisateur connecté
 
 get('/usersAds', function(){
     $controller = new AdsController();
     $controller->getAdsCurrentUser();
 });
 
+// Affichage de toutes les annonces d'une catégorie en particulier
+
 get('/ads/$category', function($category){
     $controller = new AdsController();
     $controller -> getAdsbyCategory($category);
 });
+
+// Validation par l'administrateur d'une annonce publiée par un utilisateur et pas encore en ligne
 
 get('/activateAd/$id_ad', function($id_ad){
     $controller = new AdsController();
