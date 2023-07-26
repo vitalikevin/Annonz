@@ -28,7 +28,7 @@ class AdsManager extends Model
     {
         $results = array();
 
-        $req = $this->getDatabase()->prepare("SELECT ads.*, pictures.path, categories.categoryName  FROM ads INNER JOIN pictures ON ads.id = pictures.idAd INNER JOIN categories_ads ON ads.id = categories_ads.idAd INNER JOIN categories ON categories_ads.idCategory = categories.id WHERE ads.id = ? ");
+        $req = $this->getDatabase()->prepare("SELECT ads.*, pictures.path, categories.categoryName  FROM ads INNER JOIN pictures ON ads.id = pictures.idAd INNER JOIN categories_ads ON ads.id = categories_ads.idAd INNER JOIN categories ON categories_ads.idCategory = categories.id WHERE ads.id = ? LIMIT 10 ");
         $req->execute([$id]);
         $ads = $req->fetchAll(PDO::FETCH_ASSOC);
         $req->closeCursor();
@@ -62,7 +62,7 @@ class AdsManager extends Model
     {
         $results = array();
 
-        $req = $this->getDatabase()->prepare("SELECT ads.*, pictures.path, users.username,categories.categoryName FROM ads INNER JOIN pictures ON ads.id = pictures.idAd LEFT JOIN users ON ads.idUser = users.id INNER JOIN categories_ads ON ads.id = categories_ads.idAd INNER JOIN categories ON categories_ads.idCategory = categories.id WHERE idUser = ? ");
+        $req = $this->getDatabase()->prepare("SELECT ads.*, pictures.path, users.username,categories.categoryName FROM ads INNER JOIN pictures ON ads.id = pictures.idAd LEFT JOIN users ON ads.idUser = users.id INNER JOIN categories_ads ON ads.id = categories_ads.idAd INNER JOIN categories ON categories_ads.idCategory = categories.id WHERE idUser = ? LIMIT 10 ");
 
         $req->execute([$id_user]);
         $ads = $req->fetchAll(PDO::FETCH_ASSOC);
@@ -90,7 +90,7 @@ class AdsManager extends Model
     {
 
 
-        $req = $this->getDatabase()->prepare('SELECT ads.*, categories.categoryName, pictures.path FROM ads INNER JOIN pictures ON ads.id = pictures.idAD INNER JOIN categories_ads ON ads.id = categories_ads.idAd INNER JOIN categories ON categories_ads.idCategory = categories.id');
+        $req = $this->getDatabase()->prepare('SELECT ads.*, categories.categoryName, pictures.path FROM ads INNER JOIN pictures ON ads.id = pictures.idAD INNER JOIN categories_ads ON ads.id = categories_ads.idAd INNER JOIN categories ON categories_ads.idCategory = categories.id LIMIT 10');
         $req->execute();
         $ads = $req->fetchAll(PDO::FETCH_ASSOC); 
         $req->closeCursor();
@@ -244,7 +244,7 @@ if (!isAdmin()) {
     {
         $results = array();
 
-        $req = $this->getDatabase()->prepare("SELECT ads.*, pictures.path, users.username,categories.categoryName FROM ads LEFT JOIN users ON ads.idUser = users.id INNER JOIN pictures ON ads.id = pictures.idAd INNER JOIN categories_ads ON ads.id = categories_ads.idAd INNER JOIN categories ON categories_ads.idCategory = categories.id WHERE categoryName = ? ");
+        $req = $this->getDatabase()->prepare("SELECT ads.*, pictures.path, users.username,categories.categoryName FROM ads LEFT JOIN users ON ads.idUser = users.id INNER JOIN pictures ON ads.id = pictures.idAd INNER JOIN categories_ads ON ads.id = categories_ads.idAd INNER JOIN categories ON categories_ads.idCategory = categories.id WHERE categoryName = ? LIMIT 10 ");
 
         $req->execute([$category]);
         $ads = $req->fetchAll(PDO::FETCH_ASSOC);
