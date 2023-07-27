@@ -1,4 +1,4 @@
-# projet
+# Annonz
 Site fictif de petites annonces.
 
 Réalisé en PHP orienté objet, en suivant le modèle MVC.
